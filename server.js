@@ -36,7 +36,7 @@ app.post('/ponto', (req, res) => {
 
   const registro = {
     tipo,
-    data: new Date().toLocaleString()
+    data: new Date().toLocaleString('pt-BR')
   };
 
   registros.push(registro);
