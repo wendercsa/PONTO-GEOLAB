@@ -1,61 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Ponto - Geolab</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial;
-      background: #f5f6fa;
-      text-align: center;
-      padding: 20px;
-    }
-
-    h2 {
-      margin-top: 20px;
-    }
-
-    button {
-      width: 90%;
-      padding: 15px;
-      margin: 10px;
-      font-size: 18px;
-      border-radius: 10px;
-      border: none;
-    }
-
-    .entrada { background: #2ecc71; color: white; }
-    .pausa { background: #f1c40f; }
-    .retorno { background: #3498db; color: white; }
-    .saida { background: #e74c3c; color: white; }
-  </style>
-</head>
-
 <body>
 
 <h2>Registrar Ponto</h2>
 
-<button class="entrada" onclick="registrar('entrada')">Entrada</button>
-<button class="pausa" onclick="registrar('pausa')">Intervalo</button>
-<button class="retorno" onclick="registrar('retorno')">Retorno</button>
-<button class="saida" onclick="registrar('saida')">Saída</button>
+<button onclick="registrar('entrada')">Entrada</button><br><br>
+<button onclick="registrar('intervalo')">Intervalo</button><br><br>
+<button onclick="registrar('retorno')">Retorno</button><br><br>
+<button onclick="registrar('saida')">Saída</button>
 
 <p id="msg"></p>
 
 <script>
 function registrar(tipo) {
-const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-fetch('/ponto', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    tipo,
-    usuario: usuario.email
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+  fetch('/ponto', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      tipo,
+      email: usuario.email
+    })
   })
-})
   .then(res => res.text())
   .then(msg => {
     document.getElementById('msg').innerText = msg;
