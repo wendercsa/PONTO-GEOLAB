@@ -1,11 +1,13 @@
 {
-  "name": "geolab-ponto",
+  "name": "ponto-geolab",
   "version": "1.0.0",
   "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.2",
-    "mongoose": "^8.0.0",
-    "jsonwebtoken": "^9.0.0",
-    "pdfkit": "^0.13.0"
+    "mongodb": "^6.7.0"
   }
 }
