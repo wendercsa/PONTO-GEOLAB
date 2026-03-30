@@ -16,3 +16,16 @@ const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("Mongo conectado"))
 .catch(err => console.log(err));
+
+app.post('/bater-ponto', async (req, res) => {
+  const { tipo } = req.body;
+
+  const registro = {
+    tipo,
+    data: new Date()
+  };
+
+  console.log(registro);
+
+  res.send("Ponto registrado com sucesso!");
+});
