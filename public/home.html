@@ -1,40 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Geolab</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial;
-      background: #f5f6fa;
-      text-align: center;
-      padding: 40px;
-    }
-
-    h2 {
-      margin-bottom: 30px;
-    }
-
-    button {
-      width: 90%;
-      padding: 20px;
-      margin: 10px;
-      font-size: 18px;
-      border-radius: 10px;
-      border: none;
-    }
-
-    .ponto { background: #2ecc71; color: white; }
-    .relatorio { background: #3498db; color: white; }
-  </style>
-</head>
-
 <body>
 
 <h2>Bem-vindo</h2>
 
-<button class="ponto" onclick="irPonto()">Registrar Ponto</button>
-<button class="relatorio" onclick="irRelatorio()">Espelho de Ponto</button>
+<button onclick="irPonto()">Registrar Ponto</button><br><br>
+<button onclick="irRelatorio()">Espelho de Ponto</button>
 
 <script>
 function irPonto() {
