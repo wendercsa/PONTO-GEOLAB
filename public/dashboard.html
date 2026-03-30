@@ -44,13 +44,18 @@
 
 <script>
 function registrar(tipo) {
-  fetch('/ponto', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ tipo })
+const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+fetch('/ponto', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    tipo,
+    usuario: usuario.email
   })
+})
   .then(res => res.text())
   .then(msg => {
     document.getElementById('msg').innerText = msg;
