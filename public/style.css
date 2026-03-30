@@ -1,0 +1,86 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: linear-gradient(135deg, #4b6cb7, #182848);
+  margin: 0;
+}
+
+/* CARD */
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 85%;
+  max-width: 400px;
+  margin: 80px auto;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  animation: fadeIn 0.5s ease;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+/* BOTÕES */
+button {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:active {
+  transform: scale(0.97);
+  opacity: 0.8;
+}
+
+.entrada { background: #2ecc71; }
+.pausa { background: #f1c40f; color: #000; }
+.retorno { background: #3498db; }
+.saida { background: #e74c3c; }
+
+/* MENSAGEM */
+#msg {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+/* TOAST */
+#toast {
+  visibility: hidden;
+  min-width: 250px;
+  color: #fff;
+  text-align: center;
+  border-radius: 10px;
+  padding: 15px;
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+  z-index: 999;
+}
+
+#toast.show {
+  visibility: visible;
+  animation: fadeInOut 3s;
+}
+
+/* ANIMAÇÕES */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; bottom: 0; }
+  10% { opacity: 1; bottom: 30px; }
+  90% { opacity: 1; bottom: 30px; }
+  100% { opacity: 0; bottom: 0; }
+}
