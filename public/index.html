@@ -1,55 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Geolab - Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial;
-      background: linear-gradient(135deg, #4b6cb7, #182848);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      width: 300px;
-      text-align: center;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #4b6cb7;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-  </style>
+  <title>Login</title>
 </head>
-
 <body>
 
-<div class="card">
-  <h2>Geolab</h2>
-  <input id="email" placeholder="Email">
-  <input id="senha" type="password" placeholder="Senha">
-  <button onclick="login()">Entrar</button>
-  <p id="msg"></p>
-</div>
+<h2>Geolab</h2>
+
+<input id="email" placeholder="Email"><br><br>
+<input id="senha" type="password" placeholder="Senha"><br><br>
+
+<button onclick="login()">Entrar</button>
+
+<p id="msg"></p>
 
 <script>
 function login() {
@@ -65,16 +28,16 @@ function login() {
   })
   .then(res => res.json())
   .then(data => {
-  if (data.mensagem === "Login realizado") {
+    if (data.mensagem === "Login realizado") {
 
-  localStorage.setItem("usuario", JSON.stringify(data.usuario));
+      localStorage.setItem("usuario", JSON.stringify(data.usuario));
 
-  window.location.href = "/home.html";
-}
-  } else {
-    document.getElementById('msg').innerText = "Erro no login";
-  }
-});
+      window.location.href = "/home.html";
+
+    } else {
+      document.getElementById('msg').innerText = "Erro no login";
+    }
+  });
 }
 </script>
 
