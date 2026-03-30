@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.use(express.json());
-
+app.use(express.static('public'));
 // usuários fake (depois vamos para banco real)
 let usuarios = [
   { id: 1, email: "admin@geolab.com.br", senha: "123456", tipo: "admin" },
