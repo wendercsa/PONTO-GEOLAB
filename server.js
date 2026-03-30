@@ -1,80 +1,85 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const PDFDocument = require('pdfkit');
+const cors = require('cors');
+const { MongoClient } = require('mongodb');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
 
-mongoose.connect("mongodb://127.0.0.1:27017/geolab");
+const PORT = process.env.PORT || 3000;
 
-// MODELS
-const User = mongoose.model('User', {
-  nome: String,
-  email: String,
-  senha: String,
-  tipo: String,
-  empresa: String
-});
+// 🔥 conexão segura
+const client = new MongoClient(process.env.MONGO_URL);
 
-const Registro = mongoose.model('Registro', {
-  email: String,
-  tipo: String,
-  data: String,
-  hora: String,
-  lat: Number,
-  lng: Number
-});
+let db;
 
-// LOGIN
-app.post('/login', async (req,res)=>{
- const user = await User.findOne(req.body);
- if(!user) return res.status(401).send("Erro");
- const token = jwt.sign({email:user.email}, "segredo");
- res.json({token, user});
-});
-
-// AUTH
-function auth(req,res,next){
- try{
-  const decoded = jwt.verify(req.headers.authorization,"segredo");
-  req.user = decoded;
-  next();
- }catch{
-  res.status(401).send("Token inválido");
- }
+async function conectar() {
+  try {
+    await client.connect();
+    db = client.db();
+    console.log("MongoDB conectado 🚀");
+  } catch (err) {
+    console.error("Erro ao conectar no Mongo:", err);
+  }
 }
 
-// PONTO
-app.post('/ponto', auth, async (req,res)=>{
- const now = new Date();
- await Registro.create({
-  email:req.user.email,
-  tipo:req.body.tipo,
-  data:now.toLocaleDateString('pt-BR'),
-  hora:now.toLocaleTimeString('pt-BR'),
-  lat:req.body.lat,
-  lng:req.body.lng
- });
- res.send("OK");
+conectar();
+
+// LOGIN
+app.post('/login', (req, res) => {
+  const { email, senha } = req.body;
+
+  if (email === "admin@geolab.com.br" && senha === "123") {
+    return res.json({
+      mensagem: "Login realizado",
+      usuario: { email }
+    });
+  }
+
+  return res.status(401).json({ mensagem: "Usuário inválido" });
 });
 
-// REGISTROS
-app.get('/registros', auth, async (req,res)=>{
- const dados = await Registro.find({email:req.user.email});
- res.json(dados);
+// REGISTRAR PONTO
+app.post('/ponto', async (req, res) => {
+  try {
+    const { tipo, email } = req.body;
+
+    const registro = {
+      tipo,
+      email,
+      data: new Date()
+    };
+
+    await db.collection('registros').insertOne(registro);
+
+    res.send(`Ponto registrado: ${tipo}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao registrar ponto");
+  }
 });
 
-// PDF
-app.get('/pdf', auth, async (req,res)=>{
- const dados = await Registro.find({email:req.user.email});
- const doc = new PDFDocument();
- res.setHeader('Content-Type','application/pdf');
- doc.pipe(res);
- doc.text("Folha de Ponto\n\n");
- dados.forEach(r=>doc.text(`${r.data} - ${r.tipo} - ${r.hora}`));
- doc.end();
+// LISTAR
+app.get('/registros/:email', async (req, res) => {
+  try {
+    const dados = await db
+      .collection('registros')
+      .find({ email: req.params.email })
+      .sort({ data: 1 })
+      .toArray();
+
+    res.json(dados);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao buscar registros");
+  }
 });
 
-app.listen(3000);
+// TESTE
+app.get('/', (req, res) => {
+  res.send("Geolab Sistema de Ponto 🚀");
+});
+
+app.listen(PORT, () => {
+  console.log("Servidor rodando na porta " + PORT);
+});
