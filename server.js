@@ -29,5 +29,20 @@ app.post('/login', (req, res) => {
 app.get('/', (req, res) => {
   res.send("Geolab Sistema de Ponto 🚀");
 });
+let registros = [];
 
+app.post('/ponto', (req, res) => {
+  const { tipo } = req.body;
+
+  const registro = {
+    tipo,
+    data: new Date().toLocaleString()
+  };
+
+  registros.push(registro);
+
+  console.log(registro);
+
+  res.send(`Ponto registrado: ${tipo} às ${registro.data}`);
+});
 app.listen(3000, () => console.log("Rodando..."));
