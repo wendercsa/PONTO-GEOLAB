@@ -10,3 +10,9 @@ app.get('/', (req, res) => {
 app.listen(3000, () => {
   console.log('Rodando...');
 });
+
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("Mongo conectado"))
+.catch(err => console.log(err));
