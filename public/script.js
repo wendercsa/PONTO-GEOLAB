@@ -1,49 +1,42 @@
-function login() {
-  fetch('/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email: document.getElementById('email').value,
-      senha: document.getElementById('senha').value
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.mensagem === "Login realizado") {
-      localStorage.setItem("usuario", JSON.stringify(data.usuario));
-      window.location.href = "home.html";
-    } else {
-      document.getElementById('msg').innerText = "Erro no login";
-    }
-  });
+function login(){
+ fetch('/login',{method:'POST',headers:{'Content-Type':'application/json'},
+ body:JSON.stringify({email:email.value,senha:senha.value})})
+ .then(r=>r.json()).then(d=>{
+  localStorage.token=d.token;
+  localStorage.user=JSON.stringify(d.user);
+  location='home.html';
+ });
 }
 
-function registrar(tipo) {
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
-
-  fetch('/ponto', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ tipo, email: usuario.email })
-  })
-  .then(res => res.text())
-  .then(msg => {
-    document.getElementById('msg').innerText = msg;
+function registrar(tipo){
+ navigator.geolocation.getCurrentPosition(p=>{
+  fetch('/ponto',{
+   method:'POST',
+   headers:{
+    'Content-Type':'application/json',
+    'Authorization':localStorage.token
+   },
+   body:JSON.stringify({
+    tipo,
+    lat:p.coords.latitude,
+    lng:p.coords.longitude
+   })
   });
+ });
 }
 
-function carregarEspelho() {
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
-
-  fetch('/registros/' + usuario.email)
-  .then(res => res.json())
-  .then(data => {
-    const lista = document.getElementById("lista");
-    lista.innerHTML = "";
-    data.forEach(r => {
-      const item = document.createElement("li");
-      item.innerText = `${r.tipo} - ${r.data}`;
-      lista.appendChild(item);
-    });
+function carregar(){
+ fetch('/registros',{
+  headers:{'Authorization':localStorage.token}
+ })
+ .then(r=>r.json())
+ .then(d=>{
+  d.forEach(i=>{
+   lista.innerHTML+=`<li>${i.data} - ${i.tipo} - ${i.hora}</li>`;
   });
+ });
+}
+
+function pdf(){
+ window.open('/pdf');
 }
