@@ -36,7 +36,7 @@ app.post('/ponto', (req, res) => {
 
   const registro = {
     tipo,
-    data: new Date().toLocaleString('pt-BR')
+    data: new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })
   };
 
   registros.push(registro);
