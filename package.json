@@ -1,0 +1,11 @@
+{
+  "name": "geolab-ponto",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "pdfkit": "^0.13.0"
+  }
+}
