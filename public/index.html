@@ -66,7 +66,11 @@ function login() {
   .then(res => res.json())
   .then(data => {
   if (data.mensagem === "Login realizado") {
-    window.location.href = "/home.html";
+
+  localStorage.setItem("usuario", JSON.stringify(data.usuario));
+
+  window.location.href = "/home.html";
+}
   } else {
     document.getElementById('msg').innerText = "Erro no login";
   }
