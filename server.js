@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 
 const app = express();
 
+mongoose.connect("mongodb+srv://admin:Geolab2026@cluster0.rhncglg.mongodb.net/?retryWrites=true&w=majority")
+  .then(() => console.log("Mongo conectado"))
+  .catch(err => console.log(err));
+
 // 🔥 ESSENCIAL
 app.use(express.json());
 app.use(express.static('public'));
