@@ -14,17 +14,38 @@
       background: linear-gradient(135deg, #2e4a7d, #1c2f52);
       color: white;
       margin: 0;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
       min-height: 100vh;
-      padding: 20px;
     }
 
-    .box {
+    /* 🔥 HEADER TOPO */
+    .header {
       width: 100%;
+      max-width: 420px;
+      margin: 20px auto 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .btn-voltar {
+      background: #7f8c8d;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* CONTAINER */
+    .box {
+      width: 90%;
       max-width: 420px;
 
       background: rgba(255,255,255,0.08);
@@ -35,6 +56,8 @@
       text-align: center;
 
       box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+
+      margin: 15px auto 30px;
     }
 
     h2 {
@@ -45,19 +68,15 @@
       margin-top: 20px;
     }
 
-    /* INPUTS CORRIGIDOS 🔥 */
     input, select {
       width: 100%;
       padding: 14px;
       margin: 6px 0;
-
       border-radius: 10px;
       border: none;
-
       font-size: 15px;
     }
 
-    /* BOTÕES */
     button {
       width: 100%;
       padding: 14px;
@@ -84,7 +103,6 @@
       background: #2ecc71;
     }
 
-    /* CARD USUÁRIO */
     .user {
       background: rgba(255,255,255,0.1);
       padding: 12px;
@@ -93,11 +111,6 @@
       text-align: left;
     }
 
-    .user strong {
-      font-size: 15px;
-    }
-
-    /* BOTÕES LADO A LADO */
     .actions {
       display: flex;
       gap: 8px;
@@ -117,14 +130,9 @@
       background: #e74c3c;
     }
 
-    /* RESPONSIVO EXTRA */
     @media (max-width: 400px) {
       .box {
         padding: 18px;
-      }
-
-      button {
-        padding: 12px;
       }
     }
 
@@ -132,6 +140,12 @@
 </head>
 
 <body>
+
+<!-- 🔥 HEADER COM VOLTAR -->
+<div class="header">
+  <h1>Painel Admin</h1>
+  <button class="btn-voltar" onclick="voltarHome()">⬅ Início</button>
+</div>
 
 <div class="box">
 
@@ -158,6 +172,11 @@
 // 🔐 PROTEÇÃO ADMIN
 if (localStorage.getItem('tipo') !== 'admin') {
   alert("Acesso restrito!");
+  window.location.href = "index.html";
+}
+
+// 🔙 VOLTAR
+function voltarHome() {
   window.location.href = "index.html";
 }
 
@@ -215,7 +234,7 @@ async function listarUsuarios() {
   });
 }
 
-// ✏️ EDITAR
+// EDITAR
 function editar(usuario, nomeAtual, tipoAtual) {
 
   const novoNome = prompt("Novo nome:", nomeAtual);
@@ -245,7 +264,7 @@ function editar(usuario, nomeAtual, tipoAtual) {
   });
 }
 
-// ❌ EXCLUIR
+// EXCLUIR
 function excluir(usuario) {
 
   if (!confirm("Deseja excluir este usuário?")) return;
