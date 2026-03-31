@@ -2,57 +2,118 @@
 <html>
 <head>
   <title>Geolab</title>
+
+  <!-- RESPONSIVIDADE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-  body {
-    font-family: Arial;
-    text-align: center;
-    background: #2e4a7d;
-    color: white;
-  }
+    body {
+      font-family: Arial;
+      background: linear-gradient(135deg, #2e4a7d, #1c2f52);
+      color: white;
+      margin: 0;
 
-  button {
-    width: 80%;
-    padding: 15px;
-    margin: 10px;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 16px;
-  }
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-  .entrada { background: green; }
-  .intervalo { background: orange; }
-  .retorno { background: blue; }
-  .saida { background: red; }
+    .container {
+      width: 90%;
+      max-width: 420px;
 
-  /* 👇 ADICIONA ISSO AQUI */
-  .container {
-    max-width: 400px;
-    margin: 50px auto;
-    background: rgba(0,0,0,0.2);
-    padding: 20px;
-    border-radius: 15px;
-  }
-</style>
+      background: rgba(255,255,255,0.05);
+      padding: 25px;
+      border-radius: 20px;
+
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      margin: 10px 0;
+
+      border: none;
+      border-radius: 12px;
+
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+
+      transition: 0.2s;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .entrada { background: #2ecc71; }
+    .intervalo { background: #f39c12; }
+    .retorno { background: #3498db; }
+    .saida { background: #e74c3c; }
+
+    .historico {
+      background: #bdc3c7;
+      color: #2c3e50;
+    }
+
+    /* 📱 MOBILE GRANDE */
+    @media (max-width: 480px) {
+      .container {
+        width: 92%;
+        padding: 30px;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+
+      button {
+        padding: 18px;
+        font-size: 17px;
+      }
+    }
+
+    /* 📱 TELAS MUITO PEQUENAS */
+    @media (max-width: 360px) {
+      h2 {
+        font-size: 18px;
+      }
+
+      button {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="container">
+  <div class="container">
+    <h2>🕒 Geolab Sistema de Ponto</h2>
 
-  <h2>Geolab Sistema de Ponto ⏱️</h2>
+    <button class="entrada" onclick="baterPonto('entrada')">Entrada</button>
+    <button class="intervalo" onclick="baterPonto('intervalo')">Intervalo</button>
+    <button class="retorno" onclick="baterPonto('retorno')">Retorno</button>
+    <button class="saida" onclick="baterPonto('saida')">Saída</button>
 
-  <button onclick="baterPonto('entrada')" class="entrada">Entrada</button>
-  <button onclick="baterPonto('intervalo')" class="intervalo">Intervalo</button>
-  <button onclick="baterPonto('retorno')" class="retorno">Retorno</button>
-  <button onclick="baterPonto('saida')" class="saida">Saída</button>
+    <a href="historico.html">
+      <button class="historico">Ver Histórico</button>
+    </a>
+  </div>
 
-  <a href="historico.html">
-    <button class="historico">Ver Histórico</button>
-  </a>
-
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 
 </body>
 </html>
