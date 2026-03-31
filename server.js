@@ -108,34 +108,6 @@ app.delete('/usuarios/:usuario', async (req, res) => {
 });
 
 /* ============================
-   📍 CONFIGURAÇÃO DA EMPRESA (OPCIONAL)
-============================ */
-// 👉 Coloque a localização da sua empresa aqui (Google Maps)
-const LAT_EMPRESA = -16.6869;
-const LNG_EMPRESA = -49.2648;
-const RAIO_METROS = 200;
-
-/* ============================
-   📏 FUNÇÃO DISTÂNCIA
-============================ */
-function calcularDistancia(lat1, lon1, lat2, lon2) {
-  const R = 6371e3;
-  const φ1 = lat1 * Math.PI / 180;
-  const φ2 = lat2 * Math.PI / 180;
-  const Δφ = (lat2 - lat1) * Math.PI / 180;
-  const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-  const a =
-    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-    Math.cos(φ1) * Math.cos(φ2) *
-    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-  return R * c;
-}
-
-/* ============================
    🕒 BATER PONTO (SEM GEO)
 ============================ */
 app.post('/bater-ponto', async (req, res) => {
@@ -156,27 +128,6 @@ app.post('/bater-ponto', async (req, res) => {
       });
 
     res.send("Ponto registrado com sucesso!");
-  } catch (err) {
-    res.status(500).send("Erro ao salvar ponto");
-  }
-});
-
-    if (distancia > RAIO_METROS) {
-      return res.status(403).send("Você não está na empresa!");
-    }
-
-    await mongoose.connection.db
-      .collection('pontos')
-      .insertOne({
-        nome,
-        usuario,
-        tipo,
-        latitude,
-        longitude,
-        data: new Date()
-      });
-
-    res.send("Ponto registrado com localização!");
   } catch (err) {
     res.status(500).send("Erro ao salvar ponto");
   }
