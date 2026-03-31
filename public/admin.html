@@ -38,24 +38,39 @@
       width: 100%;
       padding: 14px;
       margin-top: 10px;
-      background: #2ecc71;
       border: none;
       border-radius: 10px;
       color: white;
       font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-cadastrar {
+      background: #2ecc71;
     }
 
     .user {
       background: rgba(255,255,255,0.1);
-      padding: 10px;
-      border-radius: 10px;
+      padding: 12px;
+      border-radius: 12px;
       margin-top: 10px;
       text-align: left;
     }
 
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .edit {
+      background: #3498db;
+      flex: 1;
+    }
+
     .delete {
       background: #e74c3c;
-      margin-top: 8px;
+      flex: 1;
     }
   </style>
 </head>
@@ -75,7 +90,7 @@
     <option value="admin">Administrador</option>
   </select>
 
-  <button onclick="cadastrar()">Cadastrar</button>
+  <button class="btn-cadastrar" onclick="cadastrar()">Cadastrar</button>
 
   <h3>👥 Usuários cadastrados</h3>
   <div id="listaUsuarios"></div>
@@ -129,16 +144,52 @@ async function listarUsuarios() {
       Usuário: ${u.usuario}<br>
       Tipo: ${u.tipo}
 
-      <button class="delete" onclick="excluir('${u.usuario}')">
-        Excluir
-      </button>
+      <div class="actions">
+        <button class="edit" onclick="editar('${u.usuario}', '${u.nome}', '${u.tipo}')">
+          Editar
+        </button>
+
+        <button class="delete" onclick="excluir('${u.usuario}')">
+          Excluir
+        </button>
+      </div>
     `;
 
     lista.appendChild(div);
   });
 }
 
-// EXCLUIR
+// ✏️ EDITAR
+function editar(usuario, nomeAtual, tipoAtual) {
+
+  const novoNome = prompt("Novo nome:", nomeAtual);
+  if (!novoNome) return;
+
+  const novaSenha = prompt("Nova senha:");
+  if (!novaSenha) return;
+
+  const novoTipo = prompt("Tipo (admin ou colaborador):", tipoAtual);
+  if (!novoTipo) return;
+
+  fetch('/usuarios/' + usuario, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      nome: novoNome,
+      senha: novaSenha,
+      tipo: novoTipo
+    })
+  })
+  .then(res => res.text())
+  .then(msg => {
+    alert(msg);
+    listarUsuarios();
+  });
+}
+
+// ❌ EXCLUIR
 function excluir(usuario) {
 
   if (!confirm("Deseja excluir este usuário?")) return;
