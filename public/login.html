@@ -129,32 +129,32 @@
   </div>
 
   <script>
+async function fazerLogin() {
+  const usuario = document.getElementById('usuario').value;
+  const senha = document.getElementById('senha').value;
 
-    // 🔐 Se já estiver logado, entra direto
-    const jaLogado = localStorage.getItem('usuarioLogado');
-    if (jaLogado) {
-      window.location.href = "index.html";
-    }
+  const res = await fetch('/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ usuario, senha })
+  });
 
-    function fazerLogin() {
-      const usuario = document.getElementById('usuario').value;
-      const senha = document.getElementById('senha').value;
+  if (!res.ok) {
+    alert("Usuário ou senha inválidos");
+    return;
+  }
 
-      if (usuario === "admin" && senha === "123") {
+  const data = await res.json();
 
-        localStorage.setItem('usuarioLogado', JSON.stringify({
-          nome: "Wender Cardoso",
-          usuario: usuario
-        }));
+  localStorage.setItem('usuario', data.usuario);
+  localStorage.setItem('nome', data.nome);
+  localStorage.setItem('tipo', data.tipo);
 
-        window.location.href = "index.html";
-
-      } else {
-        alert("Usuário ou senha inválidos");
-      }
-    }
-
-  </script>
+  window.location.href = "index.html";
+}
+</script>
 
 </body>
 </html>
