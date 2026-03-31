@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial;
       background: linear-gradient(135deg, #2e4a7d, #1c2f52);
@@ -15,7 +19,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
 
       min-height: 100vh;
       padding: 20px;
@@ -23,45 +26,53 @@
 
     .container {
       width: 100%;
-      max-width: 420px;
+      max-width: 380px;
 
       background: rgba(255,255,255,0.08);
-      padding: 35px 25px;
-      border-radius: 26px;
+      padding: 25px 20px;
+      border-radius: 22px;
 
-      backdrop-filter: blur(20px);
-      box-shadow: 
-        0 15px 50px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.15);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 
       text-align: center;
     }
 
+    /* 🔥 LOGO AJUSTADA */
     .logo {
-      width: 180px;
-      margin-bottom: 15px;
+      width: 60%;
+      max-width: 180px;
+      margin-bottom: 10px;
+      opacity: 0.95;
     }
 
+    /* 🔥 NOME */
     h2 {
-      font-size: 24px;
-      margin-bottom: 5px;
+      font-size: 22px;
+      margin: 10px 0 5px;
     }
 
     .subtitulo {
       font-size: 14px;
       opacity: 0.7;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+    }
+
+    .data {
+      font-size: 13px;
+      opacity: 0.7;
+      margin-bottom: 20px;
     }
 
     button {
       width: 100%;
-      padding: 20px;
-      margin: 12px 0;
+      padding: 18px;
+      margin: 10px 0;
 
       border: none;
       border-radius: 16px;
 
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
 
       color: white;
@@ -86,17 +97,13 @@
     }
 
     .logout {
-      margin-top: 15px;
+      margin-top: 10px;
       font-size: 14px;
       background: transparent;
       color: #ccc;
       box-shadow: none;
     }
 
-    @media (max-width: 400px) {
-      h2 { font-size: 20px; }
-      button { font-size: 16px; padding: 18px; }
-    }
   </style>
 </head>
 
@@ -104,15 +111,14 @@
 
   <div class="container">
 
-    <!-- ✅ LOGO -->
+    <!-- LOGO -->
     <img src="logo.png" class="logo">
 
-    <!-- ✅ NOME -->
+    <!-- NOME -->
     <h2 id="tituloNome">Carregando...</h2>
 
     <p class="subtitulo">Registro de Jornada</p>
-
-    <p id="dataHora" class="subtitulo"></p>
+    <p id="dataHora" class="data"></p>
 
     <button class="entrada" onclick="baterPonto('entrada')">Entrada</button>
     <button class="intervalo" onclick="baterPonto('intervalo')">Intervalo</button>
@@ -131,17 +137,13 @@
 
     const titulo = document.getElementById('tituloNome');
 
-    // 🔐 USUÁRIO LOGADO
     const usuario = JSON.parse(localStorage.getItem('usuarioLogado'));
 
     if (!usuario) {
       window.location.href = "login.html";
     }
 
-    const nomeSalvo = usuario.nome;
-
-    // ✅ MOSTRAR "OLÁ + PRIMEIRO NOME"
-    const primeiroNome = nomeSalvo.split(" ")[0];
+    const primeiroNome = usuario.nome.split(" ")[0];
     titulo.innerText = "Olá, " + primeiroNome;
 
     function logout() {
@@ -159,10 +161,8 @@
       toast.style.transform = 'translateX(-50%)';
       toast.style.background = '#111';
       toast.style.color = '#fff';
-      toast.style.padding = '16px 22px';
-      toast.style.borderRadius = '12px';
-      toast.style.boxShadow = '0 5px 20px rgba(0,0,0,0.3)';
-      toast.style.fontSize = '16px';
+      toast.style.padding = '14px 20px';
+      toast.style.borderRadius = '10px';
       toast.style.zIndex = '999';
 
       document.body.appendChild(toast);
@@ -172,19 +172,11 @@
 
     function baterPonto(tipo) {
       const usuario = JSON.parse(localStorage.getItem('usuarioLogado'));
-
-      if (!usuario) {
-        mostrarToast("Erro: usuário não identificado");
-        return;
-      }
-
       const nome = usuario.nome;
 
       fetch('/bater-ponto', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tipo, nome })
       })
       .then(res => res.text())
@@ -192,11 +184,10 @@
       .catch(() => mostrarToast("Erro ao registrar ponto"));
     }
 
-    // ⏰ DATA E HORA EM TEMPO REAL
     function atualizarHora() {
       const agora = new Date();
-      const formatado = agora.toLocaleString('pt-BR');
-      document.getElementById('dataHora').innerText = formatado;
+      document.getElementById('dataHora').innerText =
+        agora.toLocaleString('pt-BR');
     }
 
     setInterval(atualizarHora, 1000);
