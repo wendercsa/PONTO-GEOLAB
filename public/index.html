@@ -94,7 +94,6 @@
       color: #2c3e50;
     }
 
-    /* 🔥 BOTÃO ADMIN */
     .admin {
       background: #8e44ad;
     }
@@ -130,7 +129,6 @@
       <button class="historico">Ver Histórico</button>
     </a>
 
-    <!-- 🔥 BOTÃO ADMIN (SÓ APARECE SE FOR ADMIN) -->
     <button id="btnAdmin" class="admin" onclick="abrirAdmin()" style="display:none;">
       Painel Admin
     </button>
@@ -149,11 +147,9 @@
       window.location.href = "login.html";
     }
 
-    // 👇 mostrar nome
     const primeiroNome = nome.split(" ")[0];
     document.getElementById('tituloNome').innerText = "Olá, " + primeiroNome;
 
-    // 🔥 MOSTRAR BOTÃO ADMIN
     if (tipo === 'admin') {
       document.getElementById('btnAdmin').style.display = 'block';
     }
@@ -183,21 +179,49 @@
       setTimeout(() => toast.remove(), 3000);
     }
 
+    // 🔥 GEOLOCALIZAÇÃO AQUI
     function baterPonto(tipo) {
-      fetch('/bater-ponto', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
+
+      if (!navigator.geolocation) {
+        mostrarToast("Geolocalização não suportada");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+
+        (pos) => {
+
+          const latitude = pos.coords.latitude;
+          const longitude = pos.coords.longitude;
+
+          fetch('/bater-ponto', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              tipo,
+              nome,
+              usuario,
+              latitude,
+              longitude
+            })
+          })
+          .then(res => res.text())
+          .then(msg => mostrarToast(msg))
+          .catch(() => mostrarToast("Erro ao registrar ponto"));
+
         },
-        body: JSON.stringify({
-          tipo,
-          nome,
-          usuario
-        })
-      })
-      .then(res => res.text())
-      .then(msg => mostrarToast(msg))
-      .catch(() => mostrarToast("Erro ao registrar ponto"));
+
+        (err) => {
+          mostrarToast("Permita a localização para bater ponto");
+        },
+
+        {
+          enableHighAccuracy: true
+        }
+
+      );
     }
 
     function logout() {
