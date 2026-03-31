@@ -6,9 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: Arial;
@@ -66,16 +64,12 @@
       width: 100%;
       padding: 18px;
       margin: 10px 0;
-
       border: none;
       border-radius: 16px;
-
       font-size: 17px;
       font-weight: bold;
-
       color: white;
       cursor: pointer;
-
       transition: 0.2s;
       box-shadow: 0 6px 15px rgba(0,0,0,0.25);
     }
@@ -105,53 +99,54 @@
       color: #ccc;
       box-shadow: none;
     }
-
   </style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <img src="logo.png" class="logo">
+  <img src="logo.png" class="logo">
 
-    <h2 id="tituloNome">Carregando...</h2>
+  <h2 id="tituloNome">Carregando...</h2>
 
-    <p class="subtitulo">Registro de Jornada</p>
-    <p id="dataHora" class="data"></p>
+  <p class="subtitulo">Registro de Jornada</p>
+  <p id="dataHora" class="data"></p>
 
-    <button class="entrada" onclick="baterPonto('entrada')">Entrada</button>
-    <button class="intervalo" onclick="baterPonto('intervalo')">Intervalo</button>
-    <button class="retorno" onclick="baterPonto('retorno')">Retorno</button>
-    <button class="saida" onclick="baterPonto('saida')">Saída</button>
+  <button class="entrada" onclick="baterPonto('entrada')">Entrada</button>
+  <button class="intervalo" onclick="baterPonto('intervalo')">Intervalo</button>
+  <button class="retorno" onclick="baterPonto('retorno')">Retorno</button>
+  <button class="saida" onclick="baterPonto('saida')">Saída</button>
 
-    <a href="historico.html">
-      <button class="historico">Ver Histórico</button>
-    </a>
+  <a href="historico.html">
+    <button class="historico">Ver Histórico</button>
+  </a>
 
-    <button id="btnAdmin" class="admin" onclick="abrirAdmin()" style="display:none;">
-      Painel Admin
-    </button>
+  <button id="btnAdmin" class="admin" onclick="abrirAdmin()" style="display:none;">
+    Painel Admin
+  </button>
 
-    <button class="logout" onclick="logout()">Sair</button>
+  <button class="logout" onclick="logout()">Sair</button>
 
-  </div>
+</div>
 
 <script>
 
+// 🔐 DADOS
 const nome = localStorage.getItem('nome');
 const usuario = localStorage.getItem('usuario');
 const tipo = localStorage.getItem('tipo');
 
+// 🔒 VALIDA SESSÃO
 if (!nome || !usuario) {
   window.location.href = "login.html";
 }
 
-// 👇 mostrar nome
+// 👇 NOME
 const primeiroNome = nome.split(" ")[0];
 document.getElementById('tituloNome').innerText = "Olá, " + primeiroNome;
 
-// 👇 mostrar botão admin
+// 👇 ADMIN
 if (tipo === 'admin') {
   document.getElementById('btnAdmin').style.display = 'block';
 }
@@ -178,19 +173,36 @@ function mostrarToast(msg) {
   toast.style.zIndex = '999';
 
   document.body.appendChild(toast);
-
   setTimeout(() => toast.remove(), 3000);
 }
 
-// 🕒 BATER PONTO (SEM GEO)
+// 🧠 CONTROLE DE FLUXO
 function baterPonto(tipo) {
 
-  if (!nome || !usuario) {
-    mostrarToast("Sessão expirada");
-    window.location.href = "login.html";
+  const ultimo = localStorage.getItem('ultimoPonto');
+
+  // 🚫 VALIDAÇÕES
+  if (tipo === 'entrada' && ultimo === 'entrada') {
+    mostrarToast("Você já registrou entrada!");
     return;
   }
 
+  if (tipo === 'intervalo' && ultimo !== 'entrada') {
+    mostrarToast("Faça a entrada primeiro!");
+    return;
+  }
+
+  if (tipo === 'retorno' && ultimo !== 'intervalo') {
+    mostrarToast("Registre o intervalo antes!");
+    return;
+  }
+
+  if (tipo === 'saida' && !['entrada','retorno'].includes(ultimo)) {
+    mostrarToast("Fluxo inválido!");
+    return;
+  }
+
+  // 🚀 ENVIO
   fetch('/bater-ponto', {
     method: 'POST',
     headers: {
@@ -203,13 +215,16 @@ function baterPonto(tipo) {
     })
   })
   .then(res => res.text())
-  .then(msg => mostrarToast(msg))
+  .then(msg => {
+    mostrarToast(msg);
+    localStorage.setItem('ultimoPonto', tipo); // 🔥 salva fluxo
+  })
   .catch(() => mostrarToast("Erro ao registrar ponto"));
 }
 
 // 🚪 LOGOUT
 function logout() {
-  localStorage.clear();
+  localStorage.clear(); // 🔥 limpa fluxo também
   window.location.href = "login.html";
 }
 
