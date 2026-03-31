@@ -136,24 +136,30 @@ function calcularDistancia(lat1, lon1, lat2, lon2) {
 }
 
 /* ============================
-   🕒 BATER PONTO COM GEO
+   🕒 BATER PONTO (SEM GEO)
 ============================ */
 app.post('/bater-ponto', async (req, res) => {
   try {
-    const { tipo, nome, usuario, latitude, longitude } = req.body;
+    const { tipo, nome, usuario } = req.body;
 
-    // 🔥 VALIDA SE VEIO LOCALIZAÇÃO
-    if (!latitude || !longitude) {
-      return res.status(400).send("Localização não informada");
+    if (!tipo || !nome || !usuario) {
+      return res.status(400).send("Dados inválidos");
     }
 
-    // 🔥 VALIDA DISTÂNCIA (OPCIONAL)
-    const distancia = calcularDistancia(
-      latitude,
-      longitude,
-      LAT_EMPRESA,
-      LNG_EMPRESA
-    );
+    await mongoose.connection.db
+      .collection('pontos')
+      .insertOne({
+        nome,
+        usuario,
+        tipo,
+        data: new Date()
+      });
+
+    res.send("Ponto registrado com sucesso!");
+  } catch (err) {
+    res.status(500).send("Erro ao salvar ponto");
+  }
+});
 
     if (distancia > RAIO_METROS) {
       return res.status(403).send("Você não está na empresa!");
