@@ -111,19 +111,16 @@ async function carregarHistorico() {
   const lista = document.getElementById('lista');
   lista.innerHTML = '';
 
-  // ordenar
   dados.sort((a, b) => new Date(a.data) - new Date(b.data));
 
   const agrupado = {};
 
-  // agrupar por data
   dados.forEach(p => {
     const data = new Date(p.data).toLocaleDateString();
     if (!agrupado[data]) agrupado[data] = [];
     agrupado[data].push(p);
   });
 
-  // montar tela
   Object.keys(agrupado).reverse().forEach(data => {
 
     const titulo = document.createElement('h3');
@@ -154,7 +151,6 @@ async function carregarHistorico() {
 
       lista.appendChild(div);
 
-      // cálculo de horas
       if (ponto.tipo === 'entrada') {
         entrada = new Date(ponto.data);
       }
@@ -166,7 +162,6 @@ async function carregarHistorico() {
 
     });
 
-    // total do dia
     const horas = Math.floor(totalMs / 3600000);
     const minutos = Math.floor((totalMs % 3600000) / 60000);
 
@@ -182,7 +177,6 @@ async function carregarHistorico() {
 
 carregarHistorico();
 </script>
-  </script>
 
 </body>
 </html>
