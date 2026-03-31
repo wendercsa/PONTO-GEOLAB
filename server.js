@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-// 🔥 CONEXÃO MONGO (APENAS UMA)
+// 🔥 CONEXÃO MONGO
 mongoose.connect("mongodb+srv://admin:Geolab2026@cluster0.rhncglg.mongodb.net/?retryWrites=true&w=majority")
   .then(() => console.log("Mongo conectado"))
   .catch(err => console.log(err));
@@ -54,7 +54,23 @@ app.post('/cadastrar-usuario', async (req, res) => {
 });
 
 /* ============================
-   🕒 BATER PONTO (COM USUÁRIO)
+   📋 LISTAR USUÁRIOS (ADMIN)
+============================ */
+app.get('/usuarios', async (req, res) => {
+  try {
+    const usuarios = await mongoose.connection.db
+      .collection('usuarios')
+      .find({}, { projection: { senha: 0 } }) // 🔒 não mostra senha
+      .toArray();
+
+    res.json(usuarios);
+  } catch (err) {
+    res.status(500).send("Erro ao buscar usuários");
+  }
+});
+
+/* ============================
+   🕒 BATER PONTO
 ============================ */
 app.post('/bater-ponto', async (req, res) => {
   try {
@@ -64,7 +80,7 @@ app.post('/bater-ponto', async (req, res) => {
       .collection('pontos')
       .insertOne({
         nome,
-        usuario, // 🔥 vinculado ao colaborador
+        usuario,
         tipo,
         data: new Date()
       });
@@ -84,7 +100,7 @@ app.get('/historico/:usuario', async (req, res) => {
 
     const registros = await mongoose.connection.db
       .collection('pontos')
-      .find({ usuario }) // 🔥 FILTRO
+      .find({ usuario })
       .sort({ data: -1 })
       .toArray();
 
