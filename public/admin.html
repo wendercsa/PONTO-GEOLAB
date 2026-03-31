@@ -73,16 +73,21 @@
 </div>
 
 <script>
+
+// 🔐 PROTEÇÃO ADMIN
+const tipo = localStorage.getItem('tipo');
+
+if (tipo !== 'admin') {
+  alert("Acesso restrito!");
+  window.location.href = "index.html";
+}
+
+// 👇 resto do código
 function cadastrar() {
   const nome = document.getElementById('nome').value;
   const usuario = document.getElementById('usuario').value;
   const senha = document.getElementById('senha').value;
   const tipo = document.getElementById('tipo').value;
-
-  if (!nome || !usuario || !senha) {
-    alert("Preencha todos os campos!");
-    return;
-  }
 
   fetch('/cadastrar-usuario', {
     method: 'POST',
@@ -92,11 +97,9 @@ function cadastrar() {
     body: JSON.stringify({ nome, usuario, senha, tipo })
   })
   .then(res => res.text())
-  .then(msg => {
-    alert(msg);
-  })
-  .catch(() => alert("Erro ao cadastrar"));
+  .then(msg => alert(msg));
 }
+
 </script>
 
 </body>
