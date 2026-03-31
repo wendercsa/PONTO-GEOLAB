@@ -121,23 +121,32 @@
 
     const titulo = document.getElementById('tituloNome');
 
-    // 🔐 Nome automático
-    let nomeSalvo = localStorage.getItem('nome');
+    // =========================
+    // 🔐 PROTEÇÃO LOGIN
+    // =========================
+    const usuarioLogado = localStorage.getItem('usuario');
 
-    if (!nomeSalvo) {
-      nomeSalvo = prompt("Digite seu nome:");
-      localStorage.setItem('nome', nomeSalvo);
+    if (!usuarioLogado) {
+      window.location.href = "/login.html";
     }
 
-    // ✅ COM OLÁ + PRIMEIRO NOME
-    const primeiroNome = nomeSalvo.split(" ")[0];
+    // =========================
+    // 👤 NOME DO USUÁRIO
+    // =========================
+    const primeiroNome = usuarioLogado.split(" ")[0];
     titulo.innerText = "Olá, " + primeiroNome;
 
+    // =========================
+    // 🚪 LOGOUT
+    // =========================
     function logout() {
-      localStorage.removeItem('nome');
-      location.reload();
+      localStorage.removeItem('usuario');
+      window.location.href = "/login.html";
     }
 
+    // =========================
+    // 🔔 TOAST
+    // =========================
     function mostrarToast(msg) {
       const toast = document.createElement('div');
       toast.innerText = msg;
@@ -159,13 +168,11 @@
       setTimeout(() => toast.remove(), 3000);
     }
 
+    // =========================
+    // ⏱️ BATER PONTO
+    // =========================
     function baterPonto(tipo) {
-      const nome = localStorage.getItem('nome');
-
-      if (!nome) {
-        mostrarToast("Erro: usuário não identificado");
-        return;
-      }
+      const nome = localStorage.getItem('usuario');
 
       fetch('/bater-ponto', {
         method: 'POST',
@@ -179,7 +186,9 @@
       .catch(() => mostrarToast("Erro ao registrar ponto"));
     }
 
-    // ⏰ DATA E HORA EM TEMPO REAL
+    // =========================
+    // ⏰ DATA E HORA
+    // =========================
     function atualizarHora() {
       const agora = new Date();
       const formatado = agora.toLocaleString('pt-BR');
