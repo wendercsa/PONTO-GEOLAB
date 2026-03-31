@@ -48,15 +48,6 @@
       margin-bottom: 20px;
     }
 
-    input {
-      width: 100%;
-      padding: 16px;
-      border-radius: 12px;
-      border: none;
-      margin-bottom: 15px;
-      font-size: 16px;
-    }
-
     button {
       width: 100%;
       padding: 20px;
@@ -111,12 +102,6 @@
     <h2 id="tituloNome">Geolab</h2>
     <p class="subtitulo">Sistema de Ponto</p>
 
-    <input 
-      type="text" 
-      id="nome" 
-      placeholder="Digite seu nome"
-    >
-
     <button class="entrada" onclick="baterPonto('entrada')">Entrada</button>
     <button class="intervalo" onclick="baterPonto('intervalo')">Intervalo</button>
     <button class="retorno" onclick="baterPonto('retorno')">Retorno</button>
@@ -132,28 +117,17 @@
 
   <script>
 
-    const inputNome = document.getElementById('nome');
     const titulo = document.getElementById('tituloNome');
 
-    // 🔐 carregar nome salvo
-    const nomeSalvo = localStorage.getItem('nome');
+    // 🔐 Nome automático (usa salvo ou define padrão)
+    let nomeSalvo = localStorage.getItem('nome');
 
-    if (nomeSalvo) {
-      inputNome.value = nomeSalvo;
-      titulo.innerText = "Olá, " + nomeSalvo;
-
-      // esconde input (fica mais profissional)
-      inputNome.style.display = "none";
+    if (!nomeSalvo) {
+      nomeSalvo = prompt("Digite seu nome:");
+      localStorage.setItem('nome', nomeSalvo);
     }
 
-    // salvar nome
-    inputNome.addEventListener('change', () => {
-      if (inputNome.value.trim() !== "") {
-        localStorage.setItem('nome', inputNome.value);
-        titulo.innerText = "Olá, " + inputNome.value;
-        inputNome.style.display = "none";
-      }
-    });
+    titulo.innerText = "Olá, " + nomeSalvo;
 
     function logout() {
       localStorage.removeItem('nome');
@@ -185,7 +159,7 @@
       const nome = localStorage.getItem('nome');
 
       if (!nome) {
-        mostrarToast("Digite seu nome primeiro!");
+        mostrarToast("Erro: usuário não identificado");
         return;
       }
 
