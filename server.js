@@ -54,61 +54,67 @@ app.post('/cadastrar-usuario', async (req, res) => {
 });
 
 /* ============================
-   📋 LISTAR USUÁRIOS
+   📋 LISTAR
 ============================ */
 app.get('/usuarios', async (req, res) => {
-  try {
-    const usuarios = await mongoose.connection.db
-      .collection('usuarios')
-      .find({}, { projection: { senha: 0 } })
-      .toArray();
+  const usuarios = await mongoose.connection.db
+    .collection('usuarios')
+    .find({}, { projection: { senha: 0 } })
+    .toArray();
 
-    res.json(usuarios);
-  } catch (err) {
-    res.status(500).send("Erro ao buscar usuários");
-  }
+  res.json(usuarios);
 });
 
 /* ============================
-   ✏️ EDITAR USUÁRIO
+   ✏️ EDITAR
 ============================ */
 app.put('/usuarios/:usuario', async (req, res) => {
-  try {
-    const { usuario } = req.params;
-    const { nome, senha, tipo } = req.body;
+  const { usuario } = req.params;
+  const { nome, senha, tipo } = req.body;
 
-    await mongoose.connection.db
-      .collection('usuarios')
-      .updateOne(
-        { usuario },
-        { $set: { nome, senha, tipo } }
-      );
+  await mongoose.connection.db
+    .collection('usuarios')
+    .updateOne(
+      { usuario },
+      { $set: { nome, senha, tipo } }
+    );
 
-    res.send("Usuário atualizado com sucesso!");
-  } catch (err) {
-    res.status(500).send("Erro ao atualizar usuário");
-  }
+  res.send("Usuário atualizado com sucesso!");
 });
 
 /* ============================
-   ❌ EXCLUIR USUÁRIO
+   ❌ EXCLUIR
 ============================ */
 app.delete('/usuarios/:usuario', async (req, res) => {
-  try {
-    const { usuario } = req.params;
+  const { usuario } = req.params;
 
-    await mongoose.connection.db
-      .collection('usuarios')
-      .deleteOne({ usuario });
+  await mongoose.connection.db
+    .collection('usuarios')
+    .deleteOne({ usuario });
 
-    res.send("Usuário removido com sucesso!");
-  } catch (err) {
-    res.status(500).send("Erro ao remover usuário");
-  }
+  res.send("Usuário removido com sucesso!");
 });
 
 /* ============================
-   🕒 BATER PONTO (SEM GEO)
+   🧠 VALIDAÇÃO DE FLUXO
+============================ */
+function validarFluxo(ultimo, novo) {
+
+  if (!ultimo && novo !== 'entrada') return false;
+
+  if (ultimo === 'entrada' && !['intervalo','saida'].includes(novo)) return false;
+
+  if (ultimo === 'intervalo' && novo !== 'retorno') return false;
+
+  if (ultimo === 'retorno' && novo !== 'saida') return false;
+
+  if (ultimo === 'saida' && novo !== 'entrada') return false;
+
+  return true;
+}
+
+/* ============================
+   🕒 BATER PONTO (NÍVEL HARD)
 ============================ */
 app.post('/bater-ponto', async (req, res) => {
   try {
@@ -118,16 +124,45 @@ app.post('/bater-ponto', async (req, res) => {
       return res.status(400).send("Dados inválidos");
     }
 
-    await mongoose.connection.db
-      .collection('pontos')
-      .insertOne({
-        nome,
-        usuario,
-        tipo,
-        data: new Date()
-      });
+    const collection = mongoose.connection.db.collection('pontos');
+
+    // 🔥 BUSCAR ÚLTIMO REGISTRO
+    const ultimo = await collection.findOne(
+      { usuario },
+      { sort: { data: -1 } }
+    );
+
+    // 🚫 BLOQUEIO DUPLICADO
+    if (ultimo && ultimo.tipo === tipo) {
+      return res.status(400).send("Ponto duplicado bloqueado!");
+    }
+
+    // 🚫 BLOQUEIO CLIQUE RÁPIDO (30s)
+    if (ultimo) {
+      const diff = (new Date() - new Date(ultimo.data)) / 1000;
+
+      if (diff < 30) {
+        return res.status(400).send("Aguarde alguns segundos para novo registro");
+      }
+    }
+
+    // 🚫 VALIDAÇÃO DE FLUXO
+    const ultimoTipo = ultimo ? ultimo.tipo : null;
+
+    if (!validarFluxo(ultimoTipo, tipo)) {
+      return res.status(400).send("Sequência de ponto inválida!");
+    }
+
+    // ✅ SALVAR
+    await collection.insertOne({
+      nome,
+      usuario,
+      tipo,
+      data: new Date()
+    });
 
     res.send("Ponto registrado com sucesso!");
+
   } catch (err) {
     res.status(500).send("Erro ao salvar ponto");
   }
@@ -137,19 +172,16 @@ app.post('/bater-ponto', async (req, res) => {
    📊 HISTÓRICO
 ============================ */
 app.get('/historico/:usuario', async (req, res) => {
-  try {
-    const { usuario } = req.params;
 
-    const registros = await mongoose.connection.db
-      .collection('pontos')
-      .find({ usuario })
-      .sort({ data: -1 })
-      .toArray();
+  const { usuario } = req.params;
 
-    res.json(registros);
-  } catch (err) {
-    res.status(500).send("Erro ao buscar histórico");
-  }
+  const registros = await mongoose.connection.db
+    .collection('pontos')
+    .find({ usuario })
+    .sort({ data: -1 })
+    .toArray();
+
+  res.json(registros);
 });
 
 /* ============================ */
