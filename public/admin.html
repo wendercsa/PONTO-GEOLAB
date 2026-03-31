@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin - Geolab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial;
+      background: linear-gradient(135deg, #2e4a7d, #1c2f52);
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: auto;
+      background: rgba(255,255,255,0.08);
+      padding: 25px;
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .salvar {
+      background: #2ecc71;
+      color: white;
+    }
+
+    .voltar {
+      background: #555;
+      color: white;
+    }
+
+    .user {
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h2>👨‍💼 Painel Admin</h2>
+
+    <input id="nome" placeholder="Nome completo">
+    <input id="usuario" placeholder="Usuário">
+    <input id="senha" type="password" placeholder="Senha">
+
+    <select id="tipo">
+      <option value="colaborador">Colaborador</option>
+      <option value="admin">Admin</option>
+    </select>
+
+    <button class="salvar" onclick="cadastrar()">Cadastrar</button>
+
+    <h3>👥 Usuários</h3>
+    <div id="listaUsuarios"></div>
+
+    <button class="voltar" onclick="voltar()">Voltar</button>
+
+  </div>
+
+<script>
+
+// 🔒 PROTEÇÃO ADMIN
+const tipo = localStorage.getItem('tipo');
+
+if (tipo !== 'admin') {
+  alert("Acesso restrito");
+  window.location.href = "index.html";
+}
+
+// 🚀 CADASTRAR
+async function cadastrar() {
+  const nome = document.getElementById('nome').value;
+  const usuario = document.getElementById('usuario').value;
+  const senha = document.getElementById('senha').value;
+  const tipo = document.getElementById('tipo').value;
+
+  const res = await fetch('/cadastrar-usuario', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ nome, usuario, senha, tipo })
+  });
+
+  const msg = await res.text();
+  alert(msg);
+
+  listar();
+}
+
+// 📋 LISTAR USUÁRIOS
+async function listar() {
+  const res = await fetch('/usuarios');
+  const dados = await res.json();
+
+  const lista = document.getElementById('listaUsuarios');
+  lista.innerHTML = '';
+
+  dados.forEach(u => {
+    const div = document.createElement('div');
+    div.className = 'user';
+    div.innerText = `${u.nome} (${u.usuario}) - ${u.tipo}`;
+    lista.appendChild(div);
+  });
+}
+
+// 🔙 VOLTAR
+function voltar() {
+  window.location.href = "index.html";
+}
+
+listar();
+
+</script>
+
+</body>
+</html>
