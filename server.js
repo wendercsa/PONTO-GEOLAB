@@ -40,11 +40,16 @@ app.post('/bater-ponto', async (req, res) => {
 
 // 🔥 BUSCAR HISTÓRICO
 app.get('/historico', async (req, res) => {
-  const pontos = await Ponto.find().sort({ data: -1 });
-  res.json(pontos);
-});
+  try {
+    const registros = await mongoose.connection.db
+      .collection('pontos')
+      .find()
+      .sort({ data: -1 })
+      .toArray();
 
-// 🔥 SERVIDOR
-app.listen(3000, () => {
-  console.log("Rodando...");
+    res.json(registros);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Erro ao buscar histórico");
+  }
 });
