@@ -28,12 +28,14 @@ app.get('/', (req, res) => {
 app.post('/bater-ponto', async (req, res) => {
   const { tipo } = req.body;
 
-  const novoPonto = new Ponto({
+  const registro = {
     tipo,
     data: new Date()
-  });
+  };
 
-  await novoPonto.save();
+  await mongoose.connection.db
+    .collection('pontos')
+    .insertOne(registro);
 
   res.send("Ponto registrado com sucesso!");
 });
