@@ -81,9 +81,7 @@ app.put('/usuarios/:usuario', async (req, res) => {
       .collection('usuarios')
       .updateOne(
         { usuario },
-        {
-          $set: { nome, senha, tipo }
-        }
+        { $set: { nome, senha, tipo } }
       );
 
     res.send("Usuário atualizado com sucesso!");
@@ -110,11 +108,56 @@ app.delete('/usuarios/:usuario', async (req, res) => {
 });
 
 /* ============================
-   🕒 BATER PONTO
+   📍 CONFIGURAÇÃO DA EMPRESA (OPCIONAL)
+============================ */
+// 👉 Coloque a localização da sua empresa aqui (Google Maps)
+const LAT_EMPRESA = -16.6869;
+const LNG_EMPRESA = -49.2648;
+const RAIO_METROS = 200;
+
+/* ============================
+   📏 FUNÇÃO DISTÂNCIA
+============================ */
+function calcularDistancia(lat1, lon1, lat2, lon2) {
+  const R = 6371e3;
+  const φ1 = lat1 * Math.PI / 180;
+  const φ2 = lat2 * Math.PI / 180;
+  const Δφ = (lat2 - lat1) * Math.PI / 180;
+  const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+    Math.cos(φ1) * Math.cos(φ2) *
+    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+/* ============================
+   🕒 BATER PONTO COM GEO
 ============================ */
 app.post('/bater-ponto', async (req, res) => {
   try {
-    const { tipo, nome, usuario } = req.body;
+    const { tipo, nome, usuario, latitude, longitude } = req.body;
+
+    // 🔥 VALIDA SE VEIO LOCALIZAÇÃO
+    if (!latitude || !longitude) {
+      return res.status(400).send("Localização não informada");
+    }
+
+    // 🔥 VALIDA DISTÂNCIA (OPCIONAL)
+    const distancia = calcularDistancia(
+      latitude,
+      longitude,
+      LAT_EMPRESA,
+      LNG_EMPRESA
+    );
+
+    if (distancia > RAIO_METROS) {
+      return res.status(403).send("Você não está na empresa!");
+    }
 
     await mongoose.connection.db
       .collection('pontos')
@@ -122,10 +165,12 @@ app.post('/bater-ponto', async (req, res) => {
         nome,
         usuario,
         tipo,
+        latitude,
+        longitude,
         data: new Date()
       });
 
-    res.send("Ponto registrado com sucesso!");
+    res.send("Ponto registrado com localização!");
   } catch (err) {
     res.status(500).send("Erro ao salvar ponto");
   }
