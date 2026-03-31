@@ -3,6 +3,9 @@
 <head>
   <title>Histórico - Geolab</title>
 
+  <!-- 🔥 IMPORTANTE PARA CELULAR -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <!-- Fonte profissional -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
@@ -12,7 +15,7 @@
       background: #2e4a7d;
       color: white;
       margin: 0;
-      font-size: 18px;
+      font-size: 20px; /* 👈 maior no celular */
     }
 
     .container {
@@ -24,7 +27,7 @@
     h2 {
       text-align: center;
       margin-bottom: 20px;
-      font-size: 24px;
+      font-size: 26px;
     }
 
     h3 {
@@ -46,7 +49,7 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 
       transition: 0.2s;
-      font-size: clamp(14px, 2.5vw, 18px);
+      font-size: 16px;
     }
 
     .card:hover {
@@ -54,9 +57,9 @@
     }
 
     .tipo {
-      padding: 5px 10px;
+      padding: 6px 12px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: bold;
     }
 
@@ -81,23 +84,22 @@
     }
 
     .data {
-      font-size: 13px;
-      opacity: 0.8;
+      font-size: 14px;
+      opacity: 0.9;
     }
 
     .total {
-      margin: 10px 0 20px;
+      margin: 12px 0 20px;
       font-weight: bold;
-      font-size: 16px;
-      opacity: 0.9;
+      font-size: 18px;
     }
 
     .voltar {
       margin-top: 20px;
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background: #555;
       color: white;
       font-size: 16px;
@@ -105,21 +107,8 @@
 
     /* 📱 RESPONSIVO */
     @media (max-width: 600px) {
-
       body {
-        font-size: 16px;
-      }
-
-      .container {
-        padding: 15px;
-      }
-
-      h2 {
-        font-size: 20px;
-      }
-
-      h3 {
-        font-size: 16px;
+        font-size: 18px;
       }
 
       .card {
@@ -127,21 +116,11 @@
       }
 
       .tipo {
-        font-size: 11px;
-        padding: 4px 8px;
-      }
-
-      .data {
         font-size: 12px;
       }
 
-      .total {
-        font-size: 14px;
-      }
-
-      .voltar {
-        font-size: 14px;
-        padding: 10px;
+      .data {
+        font-size: 13px;
       }
     }
 
@@ -168,7 +147,7 @@ async function carregarHistorico() {
   const lista = document.getElementById('lista');
   lista.innerHTML = '';
 
-  // ordenar do mais antigo para o mais novo
+  // ordenar
   dados.sort((a, b) => new Date(a.data) - new Date(b.data));
 
   const agrupado = {};
@@ -180,7 +159,6 @@ async function carregarHistorico() {
     agrupado[data].push(p);
   });
 
-  // montar tela
   Object.keys(agrupado).reverse().forEach(data => {
 
     const titulo = document.createElement('h3');
@@ -192,6 +170,19 @@ async function carregarHistorico() {
 
     agrupado[data].forEach(ponto => {
 
+      const atual = new Date(ponto.data);
+
+      // 🔥 lógica robusta (mesmo com erro de usuário)
+      if (ponto.tipo === 'entrada' || ponto.tipo === 'retorno') {
+        inicio = atual;
+      }
+
+      if (ponto.tipo === 'saida' && inicio) {
+        totalMs += atual - inicio;
+        inicio = null;
+      }
+
+      // montar card
       const div = document.createElement('div');
       div.className = 'card';
 
@@ -199,7 +190,7 @@ async function carregarHistorico() {
       tipo.className = 'tipo ' + ponto.tipo;
       tipo.innerText = ponto.tipo.toUpperCase();
 
-      const hora = new Date(ponto.data).toLocaleTimeString();
+      const hora = atual.toLocaleTimeString();
 
       const dataEl = document.createElement('div');
       dataEl.className = 'data';
@@ -210,21 +201,9 @@ async function carregarHistorico() {
 
       lista.appendChild(div);
 
-      // 🔥 LÓGICA PROFISSIONAL (RH)
-      const atual = new Date(ponto.data);
-
-      if (ponto.tipo === 'entrada' || ponto.tipo === 'retorno') {
-        inicio = atual;
-      }
-
-      if (ponto.tipo === 'saida' && inicio) {
-        totalMs += atual - inicio;
-        inicio = null;
-      }
-
     });
 
-    // calcular total
+    // total
     const horas = Math.floor(totalMs / 3600000);
     const minutos = Math.floor((totalMs % 3600000) / 60000);
 
