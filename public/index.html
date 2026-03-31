@@ -3,7 +3,6 @@
 <head>
   <title>Geolab</title>
 
-  <!-- RESPONSIVO -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -16,6 +15,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
 
       min-height: 100vh;
       padding: 20px;
@@ -25,14 +25,14 @@
       width: 100%;
       max-width: 420px;
 
-      background: rgba(255,255,255,0.06);
-      padding: 30px;
-      border-radius: 24px;
+      background: rgba(255,255,255,0.08);
+      padding: 35px 25px;
+      border-radius: 26px;
 
       backdrop-filter: blur(20px);
       box-shadow: 
-        0 10px 40px rgba(0,0,0,0.4),
-        inset 0 1px 0 rgba(255,255,255,0.1);
+        0 15px 50px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.15);
 
       text-align: center;
     }
@@ -45,18 +45,27 @@
     .subtitulo {
       font-size: 14px;
       opacity: 0.7;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 15px;
+      font-size: 15px;
     }
 
     button {
       width: 100%;
-      padding: 16px;
+      padding: 18px;
       margin: 10px 0;
 
       border: none;
       border-radius: 14px;
 
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       letter-spacing: 0.5px;
 
@@ -64,6 +73,7 @@
       cursor: pointer;
 
       transition: 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
     button:hover {
@@ -71,7 +81,8 @@
     }
 
     button:active {
-      transform: scale(0.97);
+      transform: scale(0.96);
+      opacity: 0.9;
     }
 
     .entrada { background: #2ecc71; }
@@ -83,25 +94,21 @@
       background: #bdc3c7;
       color: #2c3e50;
     }
-
-    /* MOBILE */
-    @media (max-width: 480px) {
-      h2 { font-size: 24px; }
-      button { font-size: 17px; padding: 18px; }
-    }
-
-    @media (max-width: 360px) {
-      h2 { font-size: 20px; }
-      button { font-size: 15px; padding: 14px; }
-    }
   </style>
 </head>
 
 <body>
 
   <div class="container">
-    <h2>Geolab</h2>
+
+    <h2 id="tituloNome">Geolab</h2>
     <p class="subtitulo">Sistema de Ponto</p>
+
+    <input 
+      type="text" 
+      id="nome" 
+      placeholder="Digite seu nome"
+    >
 
     <button class="entrada" onclick="baterPonto('entrada')">Entrada</button>
     <button class="intervalo" onclick="baterPonto('intervalo')">Intervalo</button>
@@ -111,9 +118,26 @@
     <a href="historico.html">
       <button class="historico">Ver Histórico</button>
     </a>
+
   </div>
 
   <script>
+    const inputNome = document.getElementById('nome');
+    const titulo = document.getElementById('tituloNome');
+
+    // carregar nome salvo
+    const nomeSalvo = localStorage.getItem('nome');
+    if (nomeSalvo) {
+      inputNome.value = nomeSalvo;
+      titulo.innerText = "Olá, " + nomeSalvo;
+    }
+
+    // salvar ao digitar
+    inputNome.addEventListener('input', () => {
+      localStorage.setItem('nome', inputNome.value);
+      titulo.innerText = "Olá, " + inputNome.value;
+    });
+
     function mostrarToast(msg) {
       const toast = document.createElement('div');
       toast.innerText = msg;
@@ -135,12 +159,19 @@
     }
 
     function baterPonto(tipo) {
+      const nome = localStorage.getItem('nome');
+
+      if (!nome) {
+        mostrarToast("Digite seu nome primeiro!");
+        return;
+      }
+
       fetch('/bater-ponto', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ tipo })
+        body: JSON.stringify({ tipo, nome })
       })
       .then(res => res.text())
       .then(msg => mostrarToast(msg))
