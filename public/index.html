@@ -38,7 +38,6 @@
       text-align: center;
     }
 
-    /* 🔥 LOGO AJUSTADA */
     .logo {
       width: 60%;
       max-width: 180px;
@@ -46,7 +45,6 @@
       opacity: 0.95;
     }
 
-    /* 🔥 NOME */
     h2 {
       font-size: 22px;
       margin: 10px 0 5px;
@@ -96,6 +94,11 @@
       color: #2c3e50;
     }
 
+    /* 🔥 BOTÃO ADMIN */
+    .admin {
+      background: #8e44ad;
+    }
+
     .logout {
       margin-top: 10px;
       font-size: 14px;
@@ -111,10 +114,8 @@
 
   <div class="container">
 
-    <!-- LOGO -->
     <img src="logo.png" class="logo">
 
-    <!-- NOME -->
     <h2 id="tituloNome">Carregando...</h2>
 
     <p class="subtitulo">Registro de Jornada</p>
@@ -129,78 +130,91 @@
       <button class="historico">Ver Histórico</button>
     </a>
 
+    <!-- 🔥 BOTÃO ADMIN (SÓ APARECE SE FOR ADMIN) -->
+    <button id="btnAdmin" class="admin" onclick="abrirAdmin()" style="display:none;">
+      Painel Admin
+    </button>
+
     <button class="logout" onclick="logout()">Sair</button>
 
   </div>
 
   <script>
-const nome = localStorage.getItem('nome');
-const usuario = localStorage.getItem('usuario');
 
-if (!nome || !usuario) {
-  window.location.href = "login.html";
-}
+    const nome = localStorage.getItem('nome');
+    const usuario = localStorage.getItem('usuario');
+    const tipo = localStorage.getItem('tipo');
 
-// 👇 mostrar nome
-const primeiroNome = nome.split(" ")[0];
-document.getElementById('tituloNome').innerText = "Olá, " + primeiroNome;
+    if (!nome || !usuario) {
+      window.location.href = "login.html";
+    }
 
-// 🔔 TOAST
-function mostrarToast(msg) {
-  const toast = document.createElement('div');
-  toast.innerText = msg;
+    // 👇 mostrar nome
+    const primeiroNome = nome.split(" ")[0];
+    document.getElementById('tituloNome').innerText = "Olá, " + primeiroNome;
 
-  toast.style.position = 'fixed';
-  toast.style.bottom = '30px';
-  toast.style.left = '50%';
-  toast.style.transform = 'translateX(-50%)';
-  toast.style.background = '#111';
-  toast.style.color = '#fff';
-  toast.style.padding = '16px 22px';
-  toast.style.borderRadius = '12px';
-  toast.style.boxShadow = '0 5px 20px rgba(0,0,0,0.3)';
-  toast.style.fontSize = '16px';
-  toast.style.zIndex = '999';
+    // 🔥 MOSTRAR BOTÃO ADMIN
+    if (tipo === 'admin') {
+      document.getElementById('btnAdmin').style.display = 'block';
+    }
 
-  document.body.appendChild(toast);
+    function abrirAdmin() {
+      window.location.href = "admin.html";
+    }
 
-  setTimeout(() => toast.remove(), 3000);
-}
+    function mostrarToast(msg) {
+      const toast = document.createElement('div');
+      toast.innerText = msg;
 
-// 🕒 BATER PONTO
-function baterPonto(tipo) {
-  fetch('/bater-ponto', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      tipo,
-      nome,
-      usuario // 🔥 ESSENCIAL
-    })
-  })
-  .then(res => res.text())
-  .then(msg => mostrarToast(msg))
-  .catch(() => mostrarToast("Erro ao registrar ponto"));
-}
+      toast.style.position = 'fixed';
+      toast.style.bottom = '30px';
+      toast.style.left = '50%';
+      toast.style.transform = 'translateX(-50%)';
+      toast.style.background = '#111';
+      toast.style.color = '#fff';
+      toast.style.padding = '16px 22px';
+      toast.style.borderRadius = '12px';
+      toast.style.boxShadow = '0 5px 20px rgba(0,0,0,0.3)';
+      toast.style.fontSize = '16px';
+      toast.style.zIndex = '999';
 
-// 🚪 LOGOUT
-function logout() {
-  localStorage.clear();
-  window.location.href = "login.html";
-}
+      document.body.appendChild(toast);
 
-// ⏰ RELÓGIO
-function atualizarHora() {
-  const agora = new Date();
-  document.getElementById('dataHora').innerText =
-    agora.toLocaleString('pt-BR');
-}
+      setTimeout(() => toast.remove(), 3000);
+    }
 
-setInterval(atualizarHora, 1000);
-atualizarHora();
-</script>
+    function baterPonto(tipo) {
+      fetch('/bater-ponto', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          tipo,
+          nome,
+          usuario
+        })
+      })
+      .then(res => res.text())
+      .then(msg => mostrarToast(msg))
+      .catch(() => mostrarToast("Erro ao registrar ponto"));
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+
+    function atualizarHora() {
+      const agora = new Date();
+      document.getElementById('dataHora').innerText =
+        agora.toLocaleString('pt-BR');
+    }
+
+    setInterval(atualizarHora, 1000);
+    atualizarHora();
+
+  </script>
 
 </body>
 </html>
