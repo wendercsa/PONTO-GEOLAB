@@ -43,9 +43,9 @@
     }
 
     .subtitulo {
-      font-size: 16px;
+      font-size: 14px;
       opacity: 0.7;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     button {
@@ -81,10 +81,10 @@
     }
 
     .logout {
-      margin-top: 10px;
+      margin-top: 15px;
       font-size: 14px;
       background: transparent;
-      color: #ddd;
+      color: #ccc;
       box-shadow: none;
     }
 
@@ -100,7 +100,9 @@
   <div class="container">
 
     <h2 id="tituloNome">Geolab</h2>
-    <p class="subtitulo">Sistema de Ponto</p>
+    <p class="subtitulo">Registro de Jornada</p>
+
+    <p id="dataHora" class="subtitulo"></p>
 
     <button class="entrada" onclick="baterPonto('entrada')">Entrada</button>
     <button class="intervalo" onclick="baterPonto('intervalo')">Intervalo</button>
@@ -119,7 +121,7 @@
 
     const titulo = document.getElementById('tituloNome');
 
-    // 🔐 Nome automático (usa salvo ou define padrão)
+    // 🔐 Nome automático
     let nomeSalvo = localStorage.getItem('nome');
 
     if (!nomeSalvo) {
@@ -127,7 +129,7 @@
       localStorage.setItem('nome', nomeSalvo);
     }
 
-    titulo.innerText = "Olá, " + nomeSalvo;
+    titulo.innerText = nomeSalvo;
 
     function logout() {
       localStorage.removeItem('nome');
@@ -174,6 +176,16 @@
       .then(msg => mostrarToast(msg))
       .catch(() => mostrarToast("Erro ao registrar ponto"));
     }
+
+    // ⏰ DATA E HORA EM TEMPO REAL
+    function atualizarHora() {
+      const agora = new Date();
+      const formatado = agora.toLocaleString('pt-BR');
+      document.getElementById('dataHora').innerText = formatado;
+    }
+
+    setInterval(atualizarHora, 1000);
+    atualizarHora();
 
   </script>
 
