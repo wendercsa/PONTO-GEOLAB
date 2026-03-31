@@ -33,7 +33,7 @@ app.post('/login', async (req, res) => {
 });
 
 /* ============================
-   👤 CADASTRO DE USUÁRIO
+   👤 CADASTRO
 ============================ */
 app.post('/cadastrar-usuario', async (req, res) => {
   const { usuario, senha, nome, tipo } = req.body;
@@ -54,18 +54,35 @@ app.post('/cadastrar-usuario', async (req, res) => {
 });
 
 /* ============================
-   📋 LISTAR USUÁRIOS (ADMIN)
+   📋 LISTAR USUÁRIOS
 ============================ */
 app.get('/usuarios', async (req, res) => {
   try {
     const usuarios = await mongoose.connection.db
       .collection('usuarios')
-      .find({}, { projection: { senha: 0 } }) // 🔒 não mostra senha
+      .find({}, { projection: { senha: 0 } })
       .toArray();
 
     res.json(usuarios);
   } catch (err) {
     res.status(500).send("Erro ao buscar usuários");
+  }
+});
+
+/* ============================
+   ❌ EXCLUIR USUÁRIO
+============================ */
+app.delete('/usuarios/:usuario', async (req, res) => {
+  try {
+    const { usuario } = req.params;
+
+    await mongoose.connection.db
+      .collection('usuarios')
+      .deleteOne({ usuario });
+
+    res.send("Usuário removido com sucesso!");
+  } catch (err) {
+    res.status(500).send("Erro ao remover usuário");
   }
 });
 
@@ -92,7 +109,7 @@ app.post('/bater-ponto', async (req, res) => {
 });
 
 /* ============================
-   📊 HISTÓRICO POR USUÁRIO
+   📊 HISTÓRICO
 ============================ */
 app.get('/historico/:usuario', async (req, res) => {
   try {
