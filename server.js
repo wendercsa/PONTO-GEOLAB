@@ -96,21 +96,31 @@ app.delete('/usuarios/:usuario', async (req, res) => {
 });
 
 /* ============================
-   🧠 VALIDAÇÃO DE FLUXO
+   🧠 VALIDAÇÃO DE FLUXO (MELHORADA)
 ============================ */
 function validarFluxo(ultimo, novo) {
 
-  if (!ultimo && novo !== 'entrada') return false;
+  if (!ultimo && novo !== 'entrada') {
+    return "Você deve iniciar com ENTRADA";
+  }
 
-  if (ultimo === 'entrada' && !['intervalo','saida'].includes(novo)) return false;
+  if (ultimo === 'entrada' && novo !== 'intervalo') {
+    return "Você já registrou entrada!";
+  }
 
-  if (ultimo === 'intervalo' && novo !== 'retorno') return false;
+  if (ultimo === 'intervalo' && novo !== 'retorno') {
+    return "Registre o RETORNO primeiro";
+  }
 
-  if (ultimo === 'retorno' && novo !== 'saida') return false;
+  if (ultimo === 'retorno' && novo !== 'saida') {
+    return "Agora registre a SAÍDA";
+  }
 
-  if (ultimo === 'saida' && novo !== 'entrada') return false;
+  if (ultimo === 'saida' && novo !== 'entrada') {
+    return "Inicie um novo ciclo com ENTRADA";
+  }
 
-  return true;
+  return null;
 }
 
 /* ============================
@@ -132,12 +142,14 @@ app.post('/bater-ponto', async (req, res) => {
       { sort: { data: -1 } }
     );
 
+    const ultimoTipo = ultimo ? ultimo.tipo : null;
+
     // 🚫 BLOQUEIO DUPLICADO
     if (ultimo && ultimo.tipo === tipo) {
-      return res.status(400).send("Ponto duplicado bloqueado!");
+      return res.status(400).send("Você já registrou esse ponto!");
     }
 
-    // 🚫 BLOQUEIO CLIQUE RÁPIDO (30s)
+    // 🚫 BLOQUEIO CLIQUE RÁPIDO
     if (ultimo) {
       const diff = (new Date() - new Date(ultimo.data)) / 1000;
 
@@ -147,10 +159,10 @@ app.post('/bater-ponto', async (req, res) => {
     }
 
     // 🚫 VALIDAÇÃO DE FLUXO
-    const ultimoTipo = ultimo ? ultimo.tipo : null;
+    const erroFluxo = validarFluxo(ultimoTipo, tipo);
 
-    if (!validarFluxo(ultimoTipo, tipo)) {
-      return res.status(400).send("Sequência de ponto inválida!");
+    if (erroFluxo) {
+      return res.status(400).send(erroFluxo);
     }
 
     // ✅ SALVAR
