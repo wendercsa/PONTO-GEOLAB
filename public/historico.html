@@ -23,19 +23,50 @@
     }
 
     .card {
-      background: rgba(255,255,255,0.1);
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+  background: rgba(255,255,255,0.08);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+    
     .tipo {
-      font-weight: bold;
-      font-size: 14px;
-    }
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.entrada {
+  background: rgba(76,175,80,0.2);
+  color: #4CAF50;
+}
+
+.saida {
+  background: rgba(244,67,54,0.2);
+  color: #f44336;
+}
+
+.intervalo {
+  background: rgba(255,152,0,0.2);
+  color: #FF9800;
+}
+
+.retorno {
+  background: rgba(33,150,243,0.2);
+  color: #2196F3;
+}
 
     .entrada { color: #4CAF50; }
     .saida { color: #f44336; }
