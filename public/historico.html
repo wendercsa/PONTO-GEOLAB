@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Histórico</title>
+</head>
+<body style="font-family: Arial; text-align:center; background:#2e4a7d; color:white;">
+
+<h2>📊 Histórico de Pontos</h2>
+
+<div id="lista"></div>
+
+<script>
+fetch('/historico')
+  .then(res => res.json())
+  .then(data => {
+    const lista = document.getElementById('lista');
+
+    data.forEach(p => {
+      const item = document.createElement('p');
+      const dataFormatada = new Date(p.data).toLocaleString();
+      item.innerText = `${p.tipo.toUpperCase()} - ${dataFormatada}`;
+      lista.appendChild(item);
+    });
+  });
+</script>
+
+</body>
+</html>
