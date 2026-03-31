@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - Geolab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial;
+      background: linear-gradient(135deg, #2e4a7d, #1c2f52);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: white;
+    }
+
+    .box {
+      width: 90%;
+      max-width: 400px;
+      padding: 30px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(15px);
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #2ecc71;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>Login</h2>
+
+    <input id="nome" placeholder="Digite seu nome">
+
+    <button onclick="entrar()">Entrar</button>
+  </div>
+
+  <script>
+    function entrar() {
+      const nome = document.getElementById('nome').value;
+
+      if (!nome) {
+        alert("Digite seu nome");
+        return;
+      }
+
+      localStorage.setItem('nome', nome);
+
+      window.location.href = "index.html";
+    }
+  </script>
+
+</body>
+</html>
