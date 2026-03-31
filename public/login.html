@@ -19,82 +19,91 @@
 
     .container {
       width: 90%;
-      max-width: 360px;
+      max-width: 340px;
 
       background: rgba(255,255,255,0.08);
-      padding: 30px 25px;
+      padding: 28px 22px;
       border-radius: 22px;
 
       backdrop-filter: blur(20px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 
       text-align: center;
       color: white;
     }
 
+    .logo {
+      font-size: 13px;
+      opacity: 0.6;
+      margin-bottom: 6px;
+    }
+
     h2 {
+      font-size: 20px;
       margin-bottom: 25px;
-      font-size: 22px;
-      letter-spacing: 0.5px;
     }
 
     .campo {
       text-align: left;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     .campo label {
-      font-size: 13px;
-      opacity: 0.7;
+      font-size: 12px;
+      opacity: 0.6;
+      margin-bottom: 6px;
       display: block;
-      margin-bottom: 5px;
     }
 
     .campo input {
       width: 100%;
-      padding: 14px 12px;
-      border-radius: 10px;
+      padding: 14px 14px;
+      border-radius: 12px;
       border: none;
       font-size: 15px;
 
+      background: rgba(255,255,255,0.15);
+      color: white;
+
       outline: none;
       box-sizing: border-box;
+
+      transition: 0.2s;
+    }
+
+    .campo input::placeholder {
+      color: rgba(255,255,255,0.6);
     }
 
     .campo input:focus {
-      outline: 2px solid #2ecc71;
+      background: rgba(255,255,255,0.25);
+      box-shadow: 0 0 0 2px #2ecc71;
     }
 
     button {
       width: 100%;
       padding: 16px;
-      margin-top: 10px;
 
-      background: #2ecc71;
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
 
-      font-size: 17px;
+      font-size: 16px;
       font-weight: bold;
 
       color: white;
       cursor: pointer;
 
       transition: 0.2s;
+      box-shadow: 0 10px 25px rgba(46, 204, 113, 0.3);
     }
 
     button:hover {
-      filter: brightness(1.1);
+      transform: translateY(-2px);
     }
 
     button:active {
-      transform: scale(0.97);
-    }
-
-    .logo {
-      font-size: 14px;
-      opacity: 0.6;
-      margin-bottom: 5px;
+      transform: scale(0.96);
     }
   </style>
 </head>
@@ -121,6 +130,7 @@
   </div>
 
   <script>
+
     function mostrarToast(msg) {
       const toast = document.createElement('div');
       toast.innerText = msg;
@@ -164,6 +174,7 @@
         mostrarToast("Usuário ou senha inválidos");
       }
     }
+
   </script>
 
 </body>
