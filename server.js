@@ -3,39 +3,48 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-// IMPORTANTE: permite receber JSON
 app.use(express.json());
-
-// arquivos estáticos
 app.use(express.static('public'));
 
-// rota principal
+// 🔥 CONEXÃO COM MONGO
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("Mongo conectado"))
+  .catch(err => console.log(err));
+
+// 🔥 MODEL (estrutura do banco)
+const PontoSchema = new mongoose.Schema({
+  tipo: String,
+  data: Date
+});
+
+const Ponto = mongoose.model('Ponto', PontoSchema);
+
+// 🔥 ROTA HOME
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-// conexão com Mongo
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("Mongo conectado"))
-.catch(err => console.log(err));
-
-// rota de bater ponto
+// 🔥 SALVAR PONTO
 app.post('/bater-ponto', async (req, res) => {
   const { tipo } = req.body;
 
-  const registro = {
+  const novoPonto = new Ponto({
     tipo,
     data: new Date()
-  };
+  });
 
-  console.log(registro);
+  await novoPonto.save();
 
   res.send("Ponto registrado com sucesso!");
 });
 
-// PORTA DO RENDER
-const PORT = process.env.PORT || 3000;
+// 🔥 BUSCAR HISTÓRICO
+app.get('/historico', async (req, res) => {
+  const pontos = await Ponto.find().sort({ data: -1 });
+  res.json(pontos);
+});
 
-app.listen(PORT, () => {
+// 🔥 SERVIDOR
+app.listen(3000, () => {
   console.log("Rodando...");
 });
