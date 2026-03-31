@@ -129,7 +129,9 @@
       localStorage.setItem('nome', nomeSalvo);
     }
 
-    titulo.innerText = nomeSalvo;
+    // ✅ COM OLÁ + PRIMEIRO NOME
+    const primeiroNome = nomeSalvo.split(" ")[0];
+    titulo.innerText = "Olá, " + primeiroNome;
 
     function logout() {
       localStorage.removeItem('nome');
