@@ -22,60 +22,66 @@
       margin-bottom: 20px;
     }
 
+    h3 {
+      margin-top: 20px;
+      opacity: 0.9;
+    }
+
     .card {
-  background: rgba(255,255,255,0.08);
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+      background: rgba(255,255,255,0.08);
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
 
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 
-  transition: 0.2s;
-}
+      transition: 0.2s;
+    }
 
-.card:hover {
-  transform: scale(1.02);
-}
-    
+    .card:hover {
+      transform: scale(1.02);
+    }
+
     .tipo {
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: bold;
-}
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
 
-.entrada {
-  background: rgba(76,175,80,0.2);
-  color: #4CAF50;
-}
+    .entrada {
+      background: rgba(76,175,80,0.2);
+      color: #4CAF50;
+    }
 
-.saida {
-  background: rgba(244,67,54,0.2);
-  color: #f44336;
-}
+    .saida {
+      background: rgba(244,67,54,0.2);
+      color: #f44336;
+    }
 
-.intervalo {
-  background: rgba(255,152,0,0.2);
-  color: #FF9800;
-}
+    .intervalo {
+      background: rgba(255,152,0,0.2);
+      color: #FF9800;
+    }
 
-.retorno {
-  background: rgba(33,150,243,0.2);
-  color: #2196F3;
-}
-
-    .entrada { color: #4CAF50; }
-    .saida { color: #f44336; }
-    .intervalo { color: #FF9800; }
-    .retorno { color: #2196F3; }
+    .retorno {
+      background: rgba(33,150,243,0.2);
+      color: #2196F3;
+    }
 
     .data {
       font-size: 13px;
       opacity: 0.8;
+    }
+
+    .total {
+      margin: 10px 0 20px;
+      font-weight: bold;
+      opacity: 0.9;
     }
 
     .voltar {
@@ -111,25 +117,27 @@ async function carregarHistorico() {
   const lista = document.getElementById('lista');
   lista.innerHTML = '';
 
+  // ordenar do mais antigo para o mais novo
   dados.sort((a, b) => new Date(a.data) - new Date(b.data));
 
   const agrupado = {};
 
+  // agrupar por data
   dados.forEach(p => {
     const data = new Date(p.data).toLocaleDateString();
     if (!agrupado[data]) agrupado[data] = [];
     agrupado[data].push(p);
   });
 
+  // montar tela
   Object.keys(agrupado).reverse().forEach(data => {
 
     const titulo = document.createElement('h3');
     titulo.innerText = '📅 ' + data;
-    titulo.style.marginTop = '20px';
     lista.appendChild(titulo);
 
     let totalMs = 0;
-    let entrada = null;
+    let ultimoRegistro = null;
 
     agrupado[data].forEach(ponto => {
 
@@ -151,23 +159,23 @@ async function carregarHistorico() {
 
       lista.appendChild(div);
 
-      if (ponto.tipo === 'entrada') {
-        entrada = new Date(ponto.data);
+      // 🔥 NOVA LÓGICA CORRETA
+      const atual = new Date(ponto.data);
+
+      if (ultimoRegistro) {
+        totalMs += atual - ultimoRegistro;
       }
 
-      if (ponto.tipo === 'saida' && entrada) {
-        totalMs += new Date(ponto.data) - entrada;
-        entrada = null;
-      }
+      ultimoRegistro = atual;
 
     });
 
+    // calcular total do dia
     const horas = Math.floor(totalMs / 3600000);
     const minutos = Math.floor((totalMs % 3600000) / 60000);
 
     const total = document.createElement('div');
-    total.style.margin = '10px 0 20px';
-    total.style.fontWeight = 'bold';
+    total.className = 'total';
     total.innerText = `⏱ Total: ${horas}h ${minutos}min`;
 
     lista.appendChild(total);
