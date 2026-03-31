@@ -17,21 +17,21 @@
     }
 
     .box {
-      width: 90%;
+      width: 100%;
       max-width: 400px;
       padding: 30px;
-      border-radius: 20px;
       background: rgba(255,255,255,0.08);
+      border-radius: 20px;
       backdrop-filter: blur(15px);
       text-align: center;
     }
 
     input {
       width: 100%;
-      padding: 15px;
+      padding: 14px;
+      margin: 10px 0;
       border-radius: 10px;
       border: none;
-      margin-top: 20px;
       font-size: 16px;
     }
 
@@ -40,7 +40,7 @@
       padding: 15px;
       margin-top: 15px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       background: #2ecc71;
       color: white;
       font-size: 16px;
@@ -54,23 +54,31 @@
   <div class="box">
     <h2>Login</h2>
 
-    <input id="nome" placeholder="Digite seu nome">
+    <input id="usuario" placeholder="Usuário">
+    <input id="senha" type="password" placeholder="Senha">
 
-    <button onclick="entrar()">Entrar</button>
+    <button onclick="login()">Entrar</button>
   </div>
 
   <script>
-    function entrar() {
-      const nome = document.getElementById('nome').value;
+    function login() {
+      const usuario = document.getElementById('usuario').value;
+      const senha = document.getElementById('senha').value;
 
-      if (!nome) {
-        alert("Digite seu nome");
-        return;
-      }
-
-      localStorage.setItem('nome', nome);
-
-      window.location.href = "index.html";
+      fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, senha })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.ok) {
+          localStorage.setItem('usuario', usuario);
+          window.location.href = '/';
+        } else {
+          alert("Usuário ou senha inválidos");
+        }
+      });
     }
   </script>
 
