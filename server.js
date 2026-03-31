@@ -70,6 +70,29 @@ app.get('/usuarios', async (req, res) => {
 });
 
 /* ============================
+   ✏️ EDITAR USUÁRIO
+============================ */
+app.put('/usuarios/:usuario', async (req, res) => {
+  try {
+    const { usuario } = req.params;
+    const { nome, senha, tipo } = req.body;
+
+    await mongoose.connection.db
+      .collection('usuarios')
+      .updateOne(
+        { usuario },
+        {
+          $set: { nome, senha, tipo }
+        }
+      );
+
+    res.send("Usuário atualizado com sucesso!");
+  } catch (err) {
+    res.status(500).send("Erro ao atualizar usuário");
+  }
+});
+
+/* ============================
    ❌ EXCLUIR USUÁRIO
 ============================ */
 app.delete('/usuarios/:usuario', async (req, res) => {
