@@ -1,28 +1,106 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Histórico</title>
+  <title>Histórico - Geolab</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #2e4a7d;
+      color: white;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tipo {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .entrada { color: #4CAF50; }
+    .saida { color: #f44336; }
+    .intervalo { color: #FF9800; }
+    .retorno { color: #2196F3; }
+
+    .data {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .voltar {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #555;
+      color: white;
+      font-size: 14px;
+    }
+  </style>
 </head>
-<body style="font-family: Arial; text-align:center; background:#2e4a7d; color:white;">
 
-<h2>📊 Histórico de Pontos</h2>
+<body>
 
-<div id="lista"></div>
+  <div class="container">
+    <h2>📊 Histórico de Pontos</h2>
 
-<script>
-fetch('/historico')
-  .then(res => res.json())
-  .then(data => {
-    const lista = document.getElementById('lista');
+    <div id="lista"></div>
 
-    data.forEach(p => {
-      const item = document.createElement('p');
-      const dataFormatada = new Date(p.data).toLocaleString();
-      item.innerText = `${p.tipo.toUpperCase()} - ${dataFormatada}`;
-      lista.appendChild(item);
-    });
-  });
-</script>
+    <a href="index.html">
+      <button class="voltar">⬅ Voltar</button>
+    </a>
+  </div>
+
+  <script>
+    async function carregarHistorico() {
+      const res = await fetch('/historico');
+      const dados = await res.json();
+
+      const lista = document.getElementById('lista');
+      lista.innerHTML = '';
+
+      dados.reverse().forEach(ponto => {
+        const div = document.createElement('div');
+        div.className = 'card';
+
+        const tipo = document.createElement('div');
+        tipo.className = 'tipo ' + ponto.tipo;
+        tipo.innerText = ponto.tipo.toUpperCase();
+
+        const data = document.createElement('div');
+        data.className = 'data';
+        data.innerText = new Date(ponto.data).toLocaleString();
+
+        div.appendChild(tipo);
+        div.appendChild(data);
+
+        lista.appendChild(div);
+      });
+    }
+
+    carregarHistorico();
+  </script>
 
 </body>
 </html>
