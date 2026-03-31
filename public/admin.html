@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    * { box-sizing: border-box; }
-
     body {
       font-family: Arial;
       background: linear-gradient(135deg, #2e4a7d, #1c2f52);
@@ -16,27 +14,16 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 20px;
     }
 
     .box {
-      width: 100%;
-      max-width: 380px;
+      width: 90%;
+      max-width: 400px;
       background: rgba(255,255,255,0.08);
       padding: 25px;
       border-radius: 20px;
       backdrop-filter: blur(15px);
       text-align: center;
-    }
-
-    h2 {
-      margin-bottom: 15px;
-    }
-
-    h3 {
-      margin-top: 20px;
-      text-align: left;
-      font-size: 16px;
     }
 
     input, select {
@@ -45,20 +32,17 @@
       margin: 8px 0;
       border-radius: 10px;
       border: none;
-      font-size: 15px;
     }
 
     button {
       width: 100%;
-      padding: 16px;
+      padding: 14px;
+      margin-top: 10px;
       background: #2ecc71;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       color: white;
       font-weight: bold;
-      margin-top: 10px;
-      font-size: 16px;
-      cursor: pointer;
     }
 
     .user {
@@ -67,7 +51,11 @@
       border-radius: 10px;
       margin-top: 10px;
       text-align: left;
-      font-size: 14px;
+    }
+
+    .delete {
+      background: #e74c3c;
+      margin-top: 8px;
     }
   </style>
 </head>
@@ -75,6 +63,7 @@
 <body>
 
 <div class="box">
+
   <h2>Cadastrar Usuário</h2>
 
   <input id="nome" placeholder="Nome completo">
@@ -88,7 +77,6 @@
 
   <button onclick="cadastrar()">Cadastrar</button>
 
-  <!-- 🔥 LISTA DE USUÁRIOS -->
   <h3>👥 Usuários cadastrados</h3>
   <div id="listaUsuarios"></div>
 
@@ -97,14 +85,12 @@
 <script>
 
 // 🔐 PROTEÇÃO ADMIN
-const tipo = localStorage.getItem('tipo');
-
-if (tipo !== 'admin') {
+if (localStorage.getItem('tipo') !== 'admin') {
   alert("Acesso restrito!");
   window.location.href = "index.html";
 }
 
-// 🚀 CADASTRAR
+// CADASTRAR
 function cadastrar() {
   const nome = document.getElementById('nome').value;
   const usuario = document.getElementById('usuario').value;
@@ -121,11 +107,11 @@ function cadastrar() {
   .then(res => res.text())
   .then(msg => {
     alert(msg);
-    listarUsuarios(); // 🔥 ATUALIZA LISTA
+    listarUsuarios();
   });
 }
 
-// 📋 LISTAR USUÁRIOS
+// LISTAR
 async function listarUsuarios() {
   const res = await fetch('/usuarios');
   const dados = await res.json();
@@ -134,6 +120,7 @@ async function listarUsuarios() {
   lista.innerHTML = '';
 
   dados.forEach(u => {
+
     const div = document.createElement('div');
     div.className = 'user';
 
@@ -141,13 +128,32 @@ async function listarUsuarios() {
       <strong>${u.nome}</strong><br>
       Usuário: ${u.usuario}<br>
       Tipo: ${u.tipo}
+
+      <button class="delete" onclick="excluir('${u.usuario}')">
+        Excluir
+      </button>
     `;
 
     lista.appendChild(div);
   });
 }
 
-// 🔥 CARREGA AUTOMATICAMENTE
+// EXCLUIR
+function excluir(usuario) {
+
+  if (!confirm("Deseja excluir este usuário?")) return;
+
+  fetch('/usuarios/' + usuario, {
+    method: 'DELETE'
+  })
+  .then(res => res.text())
+  .then(msg => {
+    alert(msg);
+    listarUsuarios();
+  });
+}
+
+// INICIAR
 listarUsuarios();
 
 </script>
