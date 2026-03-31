@@ -24,12 +24,13 @@ app.get('/', (req, res) => {
 // 🔥 SALVAR PONTO
 app.post('/bater-ponto', async (req, res) => {
   try {
-    const { tipo } = req.body;
+    const { tipo, nome } = req.body;
 
     const registro = {
-      tipo,
-      data: new Date()
-    };
+  nome,
+  tipo,
+  data: new Date()
+};
 
     await mongoose.connection.db
       .collection('pontos')
